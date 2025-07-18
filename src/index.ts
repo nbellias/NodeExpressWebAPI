@@ -3,11 +3,26 @@ import itemRoutes from './routes/itemRoutes';
 import authRoutes from './routes/authRoutes';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
+import helmet from 'helmet';
 
 const app = express();
 const PORT = process.env.PORT || 19237;
 
-app.use(express.json());
+// Security middleware
+app.disable('x-powered-by');
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", 'https:'],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
+}));
+
+app.use(express.json({ limit: '10kb' }));
+
 
 app.use('/auth', authRoutes);
 app.use('/items', itemRoutes);

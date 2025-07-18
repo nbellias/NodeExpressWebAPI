@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as authController from '../controllers/authController';
+import { body } from 'express-validator';
 
 const router = Router();
 
@@ -25,6 +26,12 @@ const router = Router();
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login', authController.login);
+router.post('/login',
+  [
+    body('username').isString().trim().notEmpty().escape().withMessage('Username is required'),
+    body('password').isString().trim().notEmpty().escape().withMessage('Password is required'),
+  ],
+  authController.login
+);
 
 export default router; 
